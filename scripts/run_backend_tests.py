@@ -671,6 +671,9 @@ def check_coverage(
     print("********************process.stdout*************")
     print(process.stdout)
     print("********************process.stdout end*********")
+    filtered_output = '\n'.join(filtered_lines)
+    
+    # Assign the filtered output back to process.stdout
 
     if process.stdout.strip() == 'No data to report.':
         # File under test is exempt from coverage according to the
@@ -688,7 +691,7 @@ def check_coverage(
         coverage = (
             float(coverage_result.group('total')) if coverage_result else 0.0
         )
-
+    process.stdout = filtered_output
     return filtered_lines, coverage
 
 
