@@ -451,17 +451,28 @@ def check_test_results(
     return total_count, total_errors, total_failures, incomplete_coverage
 
 
-def print_coverage_report(coverage_report: str) -> None:
-    lines = coverage_report.split('\n')
+def print_coverage_report(
+    tasks: List[concurrent_task_utils.TaskThread],
+    task_to_taskspec: Dict[concurrent_task_utils.TaskThread, TestingTaskSpec]
+    ) -> int:
+    """Prints the coverage report for files with incomplete coverage."""
 
-    # Print the header
-    header = lines[:5]
-    print('\n'.join(header))
+    incomplete_coverage = check_coverage(True)
 
-    # Print rows with less than 100% coverage
-    for line in lines[5:]:
-        if '100%' not in line:
-            print(line)
+    if incomplete_coverage:
+        print('Incomplete Coverage Report:')
+        print('{:<70} {:>10} {:>10} {:>10} {:>10} {:>10}'.format(
+            'Name', 'Stmts', 'Miss', 'Branch', 'BrPart', 'Cover'))
+        print('-' * 90)
+
+        for line in incomplete_coverage:
+            print('{:<70} {:>10} {:>10} {:>10} {:>10} {:>10}'.format(*line))
+
+    return len(incomplete_coverage)
+
+if __name__ == '__main__':
+    main()
+
 
 def main(args: Optional[List[str]] = None) -> None:
     """Run the tests."""
@@ -607,7 +618,24 @@ def check_coverage(
     combine: bool,
     data_file: Optional[str] = None,
     include: Optional[Tuple[str, ...]] = tuple()
-) -> str:
+) -> List[Tuple[str, str]]:
+    """Check code coverage of backend tests.
+
+    Args:
+        combine: bool. Whether to run `coverage combine` first to
+            combine coverage data from multiple test runs.
+        data_file: str|None. Path to the coverage data file to use.
+        include: tuple(str). Paths of code files to consider when
+            computing coverage. If an empty tuple is provided, all code
+            files will be used.
+
+    Returns:
+        list(tuple(str, str)). List of tuples containing the file name
+        and coverage report for files that don't have 100% coverage.
+
+    Raises:
+        RuntimeError. Subprocess failure.
+    """
     if combine:
         combine_process = subprocess.run(
             [sys.executable, '-m', 'coverage', 'combine'],
@@ -633,17 +661,21 @@ def check_coverage(
         cmd, capture_output=True, encoding='utf-8', env=env,
         check=False)
     if process.stdout.strip() == 'No data to report.':
-        return ''  # No coverage data to report.
-
-    if process.returncode:
+        # File under test is exempt from coverage according to the
+        # --omit flag or .coveragerc.
+        return []
+    elif process.returncode:
         raise RuntimeError(
             'Failed to calculate coverage because subprocess failed. %s'
             % process
         )
 
-    return process.stdout
+    coverage_lines = process.stdout.split('\n')
+    relevant_lines = [line for line in coverage_lines[2:] if '100%' not in line]
+    parsed_lines = [line.split()[:6] for line in relevant_lines]
+
+    return parsed_lines
 
 
-if __name__ == '__main__':  # pragma: no cover
-    coverage_report = check_coverage(True)
-    print_coverage_report(coverage_report)
+if __name__ == '__main__': # pragma: no cover
+    main()
