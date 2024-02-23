@@ -462,17 +462,15 @@ def print_coverage_report(
     COVERAGE_EXCLUSION_LIST_PATH)
     for task in tasks:
         if task.finished and not task.exception:
-            coverage = task.task_results[0].get_report()[-2]
             spec = task_to_taskspec[task]
-            if (
-                    spec.test_target not in coverage_exclusions
-                    and float(coverage) < min_coverage):
-                print('INCOMPLETE PER-FILE COVERAGE (%s%%): %s' % (
-                    coverage, spec.test_target))
+            coverage_lines = check_coverage(
+                False, include=(spec.test_target,), min_coverage=min_coverage)
+            if coverage_lines:
+                print('INCOMPLETE PER-FILE COVERAGE: %s' % spec.test_target)
                 incomplete_coverage += 1
-                print(task.task_results[0].get_report()[-3])
-    return incomplete_coverage
+                print('\n'.join(coverage_lines))
 
+    return incomplete_coverage
 
 def main(args: Optional[List[str]] = None) -> None:
     """Run the tests."""
@@ -617,8 +615,9 @@ def main(args: Optional[List[str]] = None) -> None:
 def check_coverage(
     combine: bool,
     data_file: Optional[str] = None,
-    include: Optional[Tuple[str, ...]] = tuple()
-) -> Tuple[str, float]:
+    include: Optional[Tuple[str, ...]] = tuple(),
+    min_coverage: float = 100.0  # Minimum coverage percentage to display
+) -> List[str]:
     """Check code coverage of backend tests.
 
     Args:
@@ -628,10 +627,10 @@ def check_coverage(
         include: tuple(str). Paths of code files to consider when
             computing coverage. If an empty tuple is provided, all code
             files will be used.
+        min_coverage: float. Minimum coverage percentage to include in the result.
 
     Returns:
-        str, float. Tuple of the coverage report and the coverage
-        percentage.
+        list(str). List of lines from the coverage report with coverage less than min_coverage.
 
     Raises:
         RuntimeError. Subprocess failure.
@@ -663,21 +662,19 @@ def check_coverage(
     if process.stdout.strip() == 'No data to report.':
         # File under test is exempt from coverage according to the
         # --omit flag or .coveragerc.
-        coverage = 100.0
+        return []
     elif process.returncode:
         raise RuntimeError(
             'Failed to calculate coverage because subprocess failed. %s'
             % process
         )
-    else:
-        coverage_result = re.search(
-            r'TOTAL\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(?P<total>\d+)%\s+',
-            process.stdout)
-        coverage = (
-            float(coverage_result.group('total')) if coverage_result else 0.0
-        )
 
-    return process.stdout, coverage
+    coverage_lines = process.stdout.split('\n')
+    filtered_lines = [
+        line for line in coverage_lines if not line.startswith('-') and float(line.split()[-1]) < min_coverage
+    ]
+
+    return filtered_lines
 
 
 if __name__ == '__main__': # pragma: no cover
