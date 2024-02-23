@@ -616,7 +616,8 @@ def main(args: Optional[List[str]] = None) -> None:
 def check_coverage(
     combine: bool,
     data_file: Optional[str] = None,
-    include: Optional[Tuple[str, ...]] = tuple()
+    include: Optional[Tuple[str, ...]] = tuple(),
+    min_coverage: float = 100.0  # Minimum coverage percentage to display
 ) -> Tuple[str, float]:
     """Check code coverage of backend tests.
 
@@ -627,7 +628,7 @@ def check_coverage(
         include: tuple(str). Paths of code files to consider when
             computing coverage. If an empty tuple is provided, all code
             files will be used.
-
+        min_coverage: float. Minimum coverage percentage to display.
     Returns:
         str, float. Tuple of the coverage report and the coverage
         percentage.
@@ -676,8 +677,12 @@ def check_coverage(
             float(coverage_result.group('total')) if coverage_result else 0.0
         )
 
-    return process.stdout, coverage
+    # Filter the coverage report based on minimum coverage
+    filtered_report = '\n'.join(
+        line for line in process.stdout.split('\n') if float(line.split()[-2]) < min_coverage
+    )
 
+    return filtered_report, coverage
 
 if __name__ == '__main__': # pragma: no cover
     main()
