@@ -453,8 +453,9 @@ def check_test_results(
 
 def print_coverage_report(
     tasks: List[concurrent_task_utils.TaskThread],
-    task_to_taskspec: Dict[concurrent_task_utils.TaskThread, TestingTaskSpec]
-    ) -> int:
+    task_to_taskspec: Dict[concurrent_task_utils.TaskThread, TestingTaskSpec],
+    min_coverage: float = 100.0  # Minimum coverage percentage to display
+) -> int:
     """Run tests and parse coverage reports."""
     incomplete_coverage = 0
     coverage_exclusions = load_coverage_exclusion_list(
@@ -465,7 +466,7 @@ def print_coverage_report(
             spec = task_to_taskspec[task]
             if (
                     spec.test_target not in coverage_exclusions
-                    and float(coverage) != 100.0):
+                    and float(coverage) < min_coverage):
                 print('INCOMPLETE PER-FILE COVERAGE (%s%%): %s' % (
                     coverage, spec.test_target))
                 incomplete_coverage += 1
@@ -616,8 +617,7 @@ def main(args: Optional[List[str]] = None) -> None:
 def check_coverage(
     combine: bool,
     data_file: Optional[str] = None,
-    include: Optional[Tuple[str, ...]] = tuple(),
-    min_coverage: float = 100.0  # Minimum coverage percentage to display
+    include: Optional[Tuple[str, ...]] = tuple()
 ) -> Tuple[str, float]:
     """Check code coverage of backend tests.
 
@@ -628,7 +628,7 @@ def check_coverage(
         include: tuple(str). Paths of code files to consider when
             computing coverage. If an empty tuple is provided, all code
             files will be used.
-        min_coverage: float. Minimum coverage percentage to display.
+
     Returns:
         str, float. Tuple of the coverage report and the coverage
         percentage.
@@ -677,12 +677,8 @@ def check_coverage(
             float(coverage_result.group('total')) if coverage_result else 0.0
         )
 
-    # Filter the coverage report based on minimum coverage
-    filtered_report = '\n'.join(
-        line for line in process.stdout.split('\n') if float(line.split()[-2]) < min_coverage
-    )
+    return process.stdout, coverage
 
-    return filtered_report, coverage
 
 if __name__ == '__main__': # pragma: no cover
     main()
