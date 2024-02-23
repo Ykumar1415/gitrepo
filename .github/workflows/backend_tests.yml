@@ -10,7 +10,7 @@ name: Backend tests
 #     branches:
 #       - develop
 #       - release-*
-on:[push]
+on: [push]
 jobs:
   run_tests:
     name: Run backend tests
