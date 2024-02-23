@@ -661,7 +661,8 @@ def check_coverage(
         check=False)
     
     # Filter out lines with 100% coverage
-    filtered_lines = [line for line in process.stdout.split('\n') if ' 100%' not in line]
+    # filtered_lines = [line for line in process.stdout.split('\n') if ' 100%' not in line]
+    filtered_lines = [line for line in process.stdout.split('\n') if (' 100%' not in line and '-----' not in line and 'Name' not in line)]
 
     # process.stdout = '\n'.join(filtered_lines)
     print("********************filtered_lines*************")
