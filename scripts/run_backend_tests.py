@@ -470,9 +470,6 @@ def print_coverage_report(
 
     return len(incomplete_coverage)
 
-if __name__ == '__main__':
-    main()
-
 
 def main(args: Optional[List[str]] = None) -> None:
     """Run the tests."""
