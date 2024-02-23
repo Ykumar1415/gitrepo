@@ -672,6 +672,9 @@ def check_coverage(
             % process
         )
     else:
+        # Filter out lines with 100% coverage
+        filtered_report_lines = [line for line in process.stdout.split('\n') if '100%' not in line]
+        coverage_report = '\n'.join(filtered_report_lines)
         coverage_result = re.search(
             r'TOTAL\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(?P<total>\d+)%\s+',
             process.stdout)
@@ -679,7 +682,7 @@ def check_coverage(
             float(coverage_result.group('total')) if coverage_result else 0.0
         )
 
-    return process.stdout, coverage
+    return coverage_report, coverage
 
 
 if __name__ == '__main__': # pragma: no cover
