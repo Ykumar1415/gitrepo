@@ -454,11 +454,12 @@ def check_test_results(
 def print_coverage_report(
     tasks: List[concurrent_task_utils.TaskThread],
     task_to_taskspec: Dict[concurrent_task_utils.TaskThread, TestingTaskSpec]
-    ) -> int:
-    """Run tests and parse coverage reports."""
+) -> None:
+    """Print the coverage report for tests with less than 100% coverage."""
     incomplete_coverage = 0
     coverage_exclusions = load_coverage_exclusion_list(
-    COVERAGE_EXCLUSION_LIST_PATH)
+        COVERAGE_EXCLUSION_LIST_PATH)
+
     for task in tasks:
         if task.finished and not task.exception:
             coverage = task.task_results[0].get_report()[-2]
@@ -470,7 +471,9 @@ def print_coverage_report(
                     coverage, spec.test_target))
                 incomplete_coverage += 1
                 print(task.task_results[0].get_report()[-3])
-    return incomplete_coverage
+
+    if incomplete_coverage == 0:
+        print('All files have 100% coverage!')
 
 
 def main(args: Optional[List[str]] = None) -> None:
