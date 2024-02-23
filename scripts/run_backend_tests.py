@@ -660,8 +660,8 @@ def check_coverage(
         cmd, capture_output=True, encoding='utf-8', env=env,
         check=False)
     
-    # Filter out lines with 100% coverage or empty missing branches
-    filtered_lines = [line for line in process.stdout.split('\n') if '100%' not in line and '  0' not in line]
+    # Filter out lines with 100% coverage
+    filtered_lines = [line for line in process.stdout.split('\n') if ' 100%' not in line]
 
     if filtered_lines:
         # Print the filtered lines
