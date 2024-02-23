@@ -663,9 +663,7 @@ def check_coverage(
     # Filter out lines with 100% coverage
     filtered_lines = [line for line in process.stdout.split('\n') if ' 100%' not in line]
 
-    if filtered_lines:
-        # Print the filtered lines
-        print('\n'.join(filtered_lines))
+    process.stdout = '\n'.join(filtered_lines)
 
     if process.stdout.strip() == 'No data to report.':
         # File under test is exempt from coverage according to the
