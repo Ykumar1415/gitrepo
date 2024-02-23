@@ -666,8 +666,6 @@ def check_coverage(
     if filtered_lines:
         # Print the filtered lines
         print('\n'.join(filtered_lines))
-    else:
-        print('No relevant lines in coverage report.')
 
     if process.stdout.strip() == 'No data to report.':
         # File under test is exempt from coverage according to the
