@@ -669,10 +669,11 @@ def check_coverage(
         if line and (' 100%' not in line and '-----' not in line and 'Name' not in line):
             if flag and i > 0:  # pragma: no cover
                 filtered_lines.append(lines[0])
+                filtered_lines.append(lines[1])  # pragma: no cover
                 flag = False  # pragma: no cover
             filtered_lines.append(line)
             # Include the next line (---) if it exists and not already included
-            if i + 1 < len(lines) and not ' 100%' in lines[i + 1]:
+            if i + 1 <= len(lines) and not ' 100%' in lines[i + 1]:
                 filtered_lines.append(lines[1])  # pragma: no cover
 
     filtered_output = '\n'.join(filtered_lines)
