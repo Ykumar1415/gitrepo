@@ -692,7 +692,7 @@ def check_coverage(
             float(coverage_result.group('total')) if coverage_result else 0.0
         )
     process.stdout = filtered_output
-    return filtered_lines, coverage
+    return filtered_output, coverage
 
 
 
