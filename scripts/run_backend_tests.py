@@ -674,7 +674,7 @@ def check_coverage(
                 filtered_lines.append(lines[i + 1])
 
     if filtered_lines:
-    filtered_lines.insert(0, lines[0])
+        filtered_lines.insert(0, lines[0])
 
     filtered_output = '\n'.join(filtered_lines)
 
