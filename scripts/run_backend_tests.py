@@ -666,13 +666,14 @@ def check_coverage(
     lines = process.stdout.split('\n')
     for i, line in enumerate(lines):
         if line and (' 100%' not in line and '-----' not in line and 'Name' not in line):
+            if i-2 >=0 and 'Name' in lines[i-2]:
+                filtered_lines.append(lines[i-2])
+                filtered_lines.append(lines[i-1])
             filtered_lines.append(line)
             # Include the next line (---) if it exists and not already included
             if i + 1 < len(lines) and not ' 100%' in lines[i + 1] :
-                if i-2 >=0 and 'Name' in lines[i-2]:
-                    filtered_lines.append(lines[i-2])
-                    filtered_lines.append(lines[i-1])
                 filtered_lines.append(lines[i + 1])
+
 
 
     # process.stdout = '\n'.join(filtered_lines)
