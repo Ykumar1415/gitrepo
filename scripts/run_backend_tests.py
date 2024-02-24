@@ -674,7 +674,7 @@ def check_coverage(
                 filtered_lines.append(lines[i + 1]) # pragma: no cover
 
     if len(filtered_lines) > 0:
-        filtered_lines1.insert(0, lines[0]) # pragma: no cover
+        filtered_lines.insert(0, lines[0]) # pragma: no cover
 
     # process.stdout = '\n'.join(filtered_lines)
     # print("********************filtered_lines*************")
