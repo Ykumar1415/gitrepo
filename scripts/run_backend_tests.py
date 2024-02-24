@@ -670,10 +670,10 @@ def check_coverage(
         if line1 and (' 100%' not in line1 and '-----' not in line1 and 'Name' not in line1):
             filtered_lines1.append(line1)
             # Include the next line (---) if it exists and not already included
-            if i + 1 < len(lines1) and not (' 100%' in lines1[i + 1] or '-----' in lines1[i + 1]):
+            if i + 1 < len(lines1) and not ' 100%' in lines1[i + 1] :
                 filtered_lines1.append(lines1[i + 1])
 
-    if filtered_lines1:
+    if len(filtered_lines1) > 0:
         filtered_lines1.insert(0, lines1[0])
 
     # process.stdout = '\n'.join(filtered_lines)
