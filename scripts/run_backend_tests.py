@@ -673,18 +673,10 @@ def check_coverage(
             if i + 1 < len(lines1) and not ' 100%' in lines1[i + 1] :
                 filtered_lines1.append(lines1[i + 1])
 
-    # if len(filtered_lines1) > 0:
-    #     filtered_lines1.insert(0, lines1[0])
-
-    # process.stdout = '\n'.join(filtered_lines)
-    print("********************filtered_lines1*************")
-    print(filtered_lines1)
-    print("********************filtered_lines_1end*********")
-    print("********************filtered_lines*************")
-    print(filtered_lines)
-    print("********************filtered_lines end*********")
+    if len(filtered_lines1) > 0:
+        filtered_lines1.insert(0, lines1[0])
     filtered_output = '\n'.join(filtered_lines)
-    
+
     # Assign the filtered output back to process.stdout
 
     if process.stdout.strip() == 'No data to report.':

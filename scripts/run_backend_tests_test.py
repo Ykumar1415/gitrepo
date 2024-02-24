@@ -943,6 +943,54 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         self.assertEqual(returned_output, coverage_report_output)
         self.assertEqual(coverage, 100)
 
+    def test_check_coverage_with_filtered_lines(self) -> None:
+        with self.swap_install_third_party_libs:
+            from scripts import run_backend_tests
+
+        coverage_report_output = 'TOTAL       283     36    112     10    86% '
+        process = MockProcessOutput()
+        process.stdout = coverage_report_output
+
+        def mock_subprocess_run(cmd: List[str], **_: str) -> MockProcessOutput:
+            if cmd == self.coverage_combine_cmd:
+                return MockProcessOutput()
+            elif cmd == self.coverage_check_cmd:
+                return process
+            else:
+                raise Exception('Invalid command passed to subprocess.run() method')
+
+        swap_subprocess_run = self.swap(subprocess, 'run', mock_subprocess_run)
+        with swap_subprocess_run:
+            returned_output, coverage = run_backend_tests.check_coverage(True)
+
+        expected_filtered_output = 'TOTAL       283     36    112     10    86% '
+        self.assertEqual(returned_output, expected_filtered_output)
+        self.assertEqual(coverage, 86)
+
+
+    def test_check_coverage_with_no_data_to_report(self) -> None:
+        with self.swap_install_third_party_libs:
+            from scripts import run_backend_tests
+
+        process = MockProcessOutput()
+        process.stdout = 'No data to report.'
+
+        def mock_subprocess_run(cmd: List[str], **_: str) -> MockProcessOutput:
+            if cmd == self.coverage_combine_cmd:
+                return MockProcessOutput()
+            elif cmd == self.coverage_check_cmd:
+                return process
+            else:
+                raise Exception('Invalid command passed to subprocess.run() method')
+
+        swap_subprocess_run = self.swap(subprocess, 'run', mock_subprocess_run)
+        with swap_subprocess_run:
+            returned_output, coverage = run_backend_tests.check_coverage(True)
+
+        self.assertEqual(returned_output, 'No data to report.')
+        self.assertEqual(coverage, 100.0)
+
+
     def test_failure_to_run_test_tasks_throws_error(self) -> None:
         with self.swap_install_third_party_libs:
             from scripts import run_backend_tests
