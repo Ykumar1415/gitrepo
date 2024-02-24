@@ -665,16 +665,20 @@ def check_coverage(
     filtered_lines = [line for line in process.stdout.split('\n') if line and (' 100%' not in line and '-----' not in line and 'Name' not in line)]
     filtered_lines1 = []
     lines1 = process.stdout.split('\n')
+    flag = false
 
     for i, line1 in enumerate(lines1):
         if line1 and (' 100%' not in line1 and '-----' not in line1 and 'Name' not in line1):
+            if not flag:
+                filtered_lines1.append(lines1[0])
+                flag = true
             filtered_lines1.append(line1)
             # Include the next line (---) if it exists and not already included
             if i + 1 < len(lines1) and not ' 100%' in lines1[i + 1] :
                 filtered_lines1.append(lines1[i + 1])
 
     # if len(filtered_lines1) > 0:
-    filtered_lines1.insert(0, lines1[0])
+    # filtered_lines1.insert(0, lines1[0])
 
     # process.stdout = '\n'.join(filtered_lines)
     print("********************filtered_lines1*************")
@@ -684,7 +688,7 @@ def check_coverage(
     print(filtered_lines)
     print("********************filtered_lines end*********")
     filtered_output = '\n'.join(filtered_lines)
-    
+
     # Assign the filtered output back to process.stdout
 
     if process.stdout.strip() == 'No data to report.':
