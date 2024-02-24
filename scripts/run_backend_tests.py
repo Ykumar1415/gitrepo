@@ -659,7 +659,7 @@ def check_coverage(
     process = subprocess.run(
         cmd, capture_output=True, encoding='utf-8', env=env,
         check=False)
-    
+
     # Filter out lines with 100% coverage
     # filtered_lines = [line for line in process.stdout.split('\n') if ' 100%' not in line]
     filtered_lines = [line for line in process.stdout.split('\n') if line and (' 100%' not in line and '-----' not in line and 'Name' not in line)]
@@ -673,8 +673,8 @@ def check_coverage(
             if i + 1 < len(lines1) and not ' 100%' in lines1[i + 1] :
                 filtered_lines1.append(lines1[i + 1])
 
-    if len(filtered_lines1) > 0:
-        filtered_lines1.insert(0, lines1[0])
+    # if len(filtered_lines1) > 0:
+    filtered_lines1.insert(0, lines1[0])
 
     # process.stdout = '\n'.join(filtered_lines)
     print("********************filtered_lines1*************")
