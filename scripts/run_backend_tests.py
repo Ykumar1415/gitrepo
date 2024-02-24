@@ -659,21 +659,24 @@ def check_coverage(
     process = subprocess.run(
         cmd, capture_output=True, encoding='utf-8', env=env,
         check=False)
-    
+
     # Filter out lines with 100% coverage
     # filtered_lines = [line for line in process.stdout.split('\n') if ' 100%' not in line]
-    filtered_lines = [line for line in process.stdout.split('\n') if line and (' 100%' not in line and '-----' not in line and 'Name' not in line)]
+    # filtered_lines = [line for line in process.stdout.split('\n') if line and (' 100%' not in line and '-----' not in line and 'Name' not in line)]
+    filtered_lines = []
+    lines = process.stdout.split('\n')
 
-    # process.stdout = '\n'.join(filtered_lines)
-    print("********************filtered_lines*************")
-    print(filtered_lines)
-    print("********************filtered_lines_end*********")
-    print("********************process.stdout*************")
-    print(process.stdout)
-    print("********************process.stdout end*********")
+    for i, line in enumerate(lines):
+        if line and (' 100%' not in line and '-----' not in line and 'Name' not in line):
+            filtered_lines.append(line)
+            # Include the next line (---) if it exists and not already included
+            if i + 1 < len(lines) and not (' 100%' in lines[i + 1] or '-----' in lines[i + 1]):
+                filtered_lines.append(lines[i + 1])
+
+    if filtered_lines:
+    filtered_lines.insert(0, lines[0])
+
     filtered_output = '\n'.join(filtered_lines)
-    
-    # Assign the filtered output back to process.stdout
 
     if process.stdout.strip() == 'No data to report.':
         # File under test is exempt from coverage according to the
