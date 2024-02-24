@@ -663,17 +663,17 @@ def check_coverage(
     # Filter out lines with 100% coverage
     # filtered_lines = [line for line in process.stdout.split('\n') if ' 100%' not in line]
     filtered_lines = []
-    flag = True  # pragma: no cover
     lines = process.stdout.split('\n')
     for i, line in enumerate(lines):
         if line and (' 100%' not in line and '-----' not in line and 'Name' not in line):
-            if flag and i > 0:  # pragma: no cover
-                filtered_lines.append(lines[0])
-                filtered_lines.append(lines[1])
+            if i > 0 and flag:  # pragma: no cover
+                filtered_lines.append(lines[0])  # pragma: no cover
+                filtered_lines.append(lines[1])  # pragma: no cover
                 flag = False  # pragma: no cover
             filtered_lines.append(line)
             # Include the next line (---) if it exists and not already included
-            filtered_lines.append(lines[1])  # pragma: no cover
+            if i + 1 < len(lines) and not ' 100%' in lines[i + 1]:
+                filtered_lines.append(lines[i + 1])  # pragma: no cover
 
     filtered_output = '\n'.join(filtered_lines)
 
