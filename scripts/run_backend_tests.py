@@ -604,13 +604,16 @@ def main(args: Optional[List[str]] = None) -> None:
         subprocess.check_call([sys.executable, '-m', 'coverage', 'combine'])
         report_stdout, coverage = check_coverage(True)
         print('')
-        print('+------------------+')
-        print('| SUMMARY OF THE FILES WITH INCOMPLETE COVERAGE|')
-        print('+------------------+')
-        print('')
+        print('+-------------------------------------------------------------------------------------------------+')
+        print('|------------------------- SUMMARY OF THE FILES WITH INCOMPLETE COVERAGE -------------------------|')
+        print('+-------------------------------------------------------------------------------------------------+')
+        print('\n')
         print(report_stdout)
         if len(report_stdout) > 0: # pragma: no cover
-            print('BACKEND TEST COVERAGE IS NOT 100% : Take Action to Achieve 100% Coverage')  # pragma: no cover
+            print("WARNING: Backend test coverage is below 100%. The rightmost \"Missing\" column above shows which lines are uncovered.") # pragma: no cover
+            print("Please add tests for scenarios that exercise those lines of code so that there are no uncovered lines in each file.") # pragma: no cover
+            print("For more information, please see [wiki page](https://github.com/oppia/oppia/wiki/Backend-tests#coverage-reports ).") # pragma: no cover
+
         if (coverage != 100
                 and not parsed_args.ignore_coverage):
             raise Exception('Backend test coverage is not 100%')
