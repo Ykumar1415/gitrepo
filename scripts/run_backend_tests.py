@@ -603,8 +603,14 @@ def main(args: Optional[List[str]] = None) -> None:
     if parsed_args.generate_coverage_report:
         subprocess.check_call([sys.executable, '-m', 'coverage', 'combine'])
         report_stdout, coverage = check_coverage(True)
+        print('')
+        print('+------------------+')
+        print('| SUMMARY OF THE FILES WITH INCOMPLETE COVERAGE|')
+        print('+------------------+')
+        print('')
         print(report_stdout)
-
+        if len(report_stdout) > 0:
+            raise Exception('BACKEND TEST COVERAGE IS NOT 100% : Take Action to Achieve 100% Coverage')
         if (coverage != 100
                 and not parsed_args.ignore_coverage):
             raise Exception('Backend test coverage is not 100%')
@@ -669,11 +675,12 @@ def check_coverage(
         if line and (' 100%' not in line and '-----' not in line and 'Name' not in line):
             if flag and i > 0:  # pragma: no cover
                 filtered_lines.append(lines[0])
+                filtered_lines.append(lines[1])
                 flag = False  # pragma: no cover
             filtered_lines.append(line)
             # Include the next line (---) if it exists and not already included
-            if i + 1 < len(lines) and not ' 100%' in lines[i + 1]: # pragma: no cover
-                filtered_lines.append(lines[i + 1])  # pragma: no cover
+            if i + 1 < len(lines) and not ' 100%' in lines[i + 1]:
+                filtered_lines.append(lines[1])  # pragma: no cover
 
     filtered_output = '\n'.join(filtered_lines)
 
