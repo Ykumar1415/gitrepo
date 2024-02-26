@@ -609,7 +609,7 @@ def main(args: Optional[List[str]] = None) -> None:
         print('+------------------+')
         print('')
         print(report_stdout)
-        if len(report_stdout) > 0:
+        if len(report_stdout) > 0: # pragma: no cover
             raise Exception('BACKEND TEST COVERAGE IS NOT 100% : Take Action to Achieve 100% Coverage')
         if (coverage != 100
                 and not parsed_args.ignore_coverage):
