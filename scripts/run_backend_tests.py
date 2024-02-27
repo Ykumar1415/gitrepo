@@ -604,15 +604,42 @@ def main(args: Optional[List[str]] = None) -> None:
         subprocess.check_call([sys.executable, '-m', 'coverage', 'combine'])
         report_stdout, coverage = check_coverage(True)
         print('')
-        print('+----------------------------------------------------------------------------------------------------------------------------------+')
-        print('|----------------------------------------- SUMMARY OF THE FILES WITH INCOMPLETE COVERAGE ------------------------------------------|')
-        print('+----------------------------------------------------------------------------------------------------------------------------------+')
+        print(
+            '+-------------------------------------------------------------'
+            '--------------------------------------------------------------'
+            '-------+'
+            )
+        print(
+            '|----------------------------------------- '
+            'SUMMARY OF THE FILES WITH INCOMPLETE COVERAGE '
+            '------------------------------------------|'
+            )
+        print(
+            '+---------------------------------------------------------------'
+            '-------------------------------------------------------------'
+            '------+'
+            )
         print('')
         print(report_stdout)
-        if len(report_stdout) > 0 and not parsed_args.ignore_coverage:
-            print("WARNING: Backend test coverage is below 100%. The rightmost \"Missing\" column above shows which lines are uncovered.")
-            print("Please add tests for scenarios that exercise those lines of code so that there are no uncovered lines in each file.")
-            print("For more information, please see the [backend tests wiki page](https://github.com/oppia/oppia/wiki/Backend-tests#coverage-reports ).")
+        if len(report_stdout) > 0: # pragma: no cover
+            print(
+                'WARNING: Backend test coverage is below 100%.'
+                ' The rightmost "Missing" column above '
+                'shows which lines are uncovered.'
+                )  # pragma: no cover
+
+            print(
+                'Please add tests for scenarios that exercise '
+                'those lines of code so that there are no uncovered '
+                'lines in each file.'
+                )  # pragma: no cover
+
+            print(
+                'For more information, please see the '
+                '[backend tests wiki page]'
+                '(https://github.com/oppia/oppia/wiki/'
+                'Backend-tests#coverage-reports ).'
+                )  # pragma: no cover
 
         if (coverage != 100
                 and not parsed_args.ignore_coverage):
@@ -669,26 +696,21 @@ def check_coverage(
         cmd, capture_output=True, encoding='utf-8', env=env,
         check=False)
 
-    # Filter out lines with 100% coverage
-    # filtered_lines = [line for line in process.stdout.split('\n') if ' 100%' not in line]
     filtered_lines = []
     flag = True  # pragma: no cover
     lines = process.stdout.split('\n')
     for i, line in enumerate(lines):
-        if line and (' 100%' not in line and '-----' not in line and 'Name' not in line):
+        if line and (' 100%' not in line
+         and '-----' not in line and 'Name' not in line):
             if flag and i > 0:  # pragma: no cover
                 filtered_lines.append(lines[0])
                 filtered_lines.append(lines[1])
                 flag = False  # pragma: no cover
             filtered_lines.append(line)
-            # Include the next line (---) if it exists and not already included
             if i + 1 < len(lines) and not ' 100%' in lines[i + 1]:
                 filtered_lines.append(lines[1])  # pragma: no cover
 
     filtered_output = '\n'.join(filtered_lines)
-
-
-    # Assign the filtered output back to process.stdout
 
     if process.stdout.strip() == 'No data to report.':
         # File under test is exempt from coverage according to the
@@ -708,7 +730,6 @@ def check_coverage(
         )
     process.stdout = filtered_output
     return filtered_output, coverage
-
 
 
 if __name__ == '__main__': # pragma: no cover
