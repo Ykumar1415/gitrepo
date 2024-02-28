@@ -915,7 +915,11 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         with swap_subprocess_run:
             returned_output, coverage = run_backend_tests.check_coverage(
                 False, data_file=data_file)
-
+        print("**********************************************")
+        print("returned_output", returned_output)
+        print("coverage", coverage)
+        print("coverage_report_output", coverage_report_output)
+        print("**********************************************")
         self.assertEqual(returned_output, coverage_report_output)
         self.assertEqual(coverage, 86)
 

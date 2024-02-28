@@ -697,18 +697,18 @@ def check_coverage(
         check=False)
 
     filtered_lines = []
-    flag = True  # pragma: no cover
+    flag = True
     lines = process.stdout.split('\n')
     for i, line in enumerate(lines):
         if line and (' 100%' not in line
          and '-----' not in line and 'Name' not in line):
-            if flag and i > 0:  # pragma: no cover
+            if flag and i > 0:
                 filtered_lines.append(lines[0])
                 filtered_lines.append(lines[1])
-                flag = False  # pragma: no cover
+                flag = False
             filtered_lines.append(line)
             if i + 1 < len(lines) and not ' 100%' in lines[i + 1]:
-                filtered_lines.append(lines[1])  # pragma: no cover
+                filtered_lines.append(lines[1])
 
     filtered_output = '\n'.join(filtered_lines)
 
