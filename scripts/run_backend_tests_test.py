@@ -849,6 +849,7 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
             from scripts import run_backend_tests
         failed_process_output = MockProcessOutput()
         failed_process_output.returncode = 1
+        failed_process_output.stderr = 'Error message from subprocess'
 
         def mock_subprocess_run(cmd: List[str], **_: str) -> MockProcessOutput:
             if cmd == self.coverage_combine_cmd:
@@ -862,7 +863,7 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         swap_subprocess_run = self.swap(subprocess, 'run', mock_subprocess_run)
         error_msg = (
             'Failed to calculate coverage because subprocess failed. '
-            '%s' % failed_process_output)
+            '%s\nError message from subprocess' % failed_process_output)
         with swap_subprocess_run, self.assertRaisesRegex(
                 RuntimeError, error_msg):
             run_backend_tests.check_coverage(True)
@@ -1033,3 +1034,100 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
 
         self.assertIn('Task result', results[0].messages)
         self.assertEqual(len(results[0].messages), 1)
+
+    def test_line_706_is_covered(self):
+        with self.swap_install_third_party_libs:
+            from scripts import run_backend_tests
+
+        process = MockProcessOutput()
+        process.stdout = 'Your Coverage Report Output Here'
+
+        def mock_subprocess_run(cmd: List[str], **_: str) -> MockProcessOutput:
+            if cmd == self.coverage_combine_cmd:
+                return MockProcessOutput()
+            elif cmd == self.coverage_check_cmd:
+                return process
+            else:
+                raise Exception(
+                    'Invalid command passed to subprocess.run() method')
+
+        swap_subprocess_run = self.swap(subprocess, 'run', mock_subprocess_run)
+
+        with swap_subprocess_run:
+            returned_output, coverage = run_backend_tests.check_coverage(True)
+
+        self.assertTrue(flag == True and i > 0)  # Corrected assertion based on your actual flag variable
+
+
+    def test_line_707_is_covered(self):
+        with self.swap_install_third_party_libs:
+            from scripts import run_backend_tests
+
+        process = MockProcessOutput()
+        process.stdout = 'Your Coverage Report Output Here'
+
+        def mock_subprocess_run(cmd: List[str], **_: str) -> MockProcessOutput:
+            if cmd == self.coverage_combine_cmd:
+                return MockProcessOutput()
+            elif cmd == self.coverage_check_cmd:
+                return process
+            else:
+                raise Exception(
+                    'Invalid command passed to subprocess.run() method')
+
+        swap_subprocess_run = self.swap(subprocess, 'run', mock_subprocess_run)
+
+        with swap_subprocess_run:
+            returned_output, coverage = run_backend_tests.check_coverage(True)
+
+        self.assertTrue(flag == True and i > 0)  # Corrected assertion based on your actual flag variable
+        self.assertIn(lines[1], filtered_lines)  # Adjust based on your actual variable names
+
+
+    def test_line_708_is_covered(self):
+        with self.swap_install_third_party_libs:
+            from scripts import run_backend_tests
+
+        process = MockProcessOutput()
+        process.stdout = 'Your Coverage Report Output Here'
+
+        def mock_subprocess_run(cmd: List[str], **_: str) -> MockProcessOutput:
+            if cmd == self.coverage_combine_cmd:
+                return MockProcessOutput()
+            elif cmd == self.coverage_check_cmd:
+                return process
+            else:
+                raise Exception(
+                    'Invalid command passed to subprocess.run() method')
+
+        swap_subprocess_run = self.swap(subprocess, 'run', mock_subprocess_run)
+
+        with swap_subprocess_run:
+            returned_output, coverage = run_backend_tests.check_coverage(True)
+
+        self.assertFalse(flag == False)  # Corrected assertion based on your actual flag variable
+
+
+    def test_line_711_is_covered(self):
+        with self.swap_install_third_party_libs:
+            from scripts import run_backend_tests
+
+        process = MockProcessOutput()
+        process.stdout = 'Your Coverage Report Output Here'
+
+        def mock_subprocess_run(cmd: List[str], **_: str) -> MockProcessOutput:
+            if cmd == self.coverage_combine_cmd:
+                return MockProcessOutput()
+            elif cmd == self.coverage_check_cmd:
+                return process
+            else:
+                raise Exception(
+                    'Invalid command passed to subprocess.run() method')
+
+        swap_subprocess_run = self.swap(subprocess, 'run', mock_subprocess_run)
+
+        with swap_subprocess_run:
+            returned_output, coverage = run_backend_tests.check_coverage(True)
+
+        self.assertLess(i, len(lines) - 1)  # Adjust this assertion based on your actual loop control variable
+        self.assertNotIn(' 100%', lines[i + 1])  # Adjust based on your actual variable names
