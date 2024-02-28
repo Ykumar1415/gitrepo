@@ -679,7 +679,7 @@ def check_coverage(
         if (combine_process.returncode and not no_combine):
             raise RuntimeError(
                 'Failed to combine coverage because subprocess failed.'
-                '\n%s\n%s' % (combine_process, combine_process.stderr))
+                '\n%s' % combine_process)
 
     cmd = [
         sys.executable, '-m', 'coverage', 'report',
@@ -718,8 +718,9 @@ def check_coverage(
         coverage = 100.0
     elif process.returncode:
         raise RuntimeError(
-            'Failed to calculate coverage because subprocess failed. %s\n%s'
-            % (process, process.stderr))  # Include stderr in the error message
+            'Failed to calculate coverage because subprocess failed. %s'
+            % process
+        )
     else:
         coverage_result = re.search(
             r'TOTAL\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(?P<total>\d+)%\s+',
