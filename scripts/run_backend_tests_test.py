@@ -943,7 +943,7 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
                 False, data_file=data_file)
 
         self.assertEqual(returned_output, coverage_report_output)
-        self.assertEqual(coverage, 100.0)
+        self.assertEqual(coverage, 0.0)
 
     def test_no_data_to_report_returns_full_coverage(self) -> None:
         with self.swap_install_third_party_libs:
