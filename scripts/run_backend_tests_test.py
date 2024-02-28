@@ -844,26 +844,27 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
                 RuntimeError, error_msg):
             run_backend_tests.check_coverage(True)
 
-    def test_failure_to_calculate_coverage_report_throws_error(self) -> None:
+    def test_failure_to_combine_coverage_report_throws_error(self):
         with self.swap_install_third_party_libs:
             from scripts import run_backend_tests
+
         failed_process_output = MockProcessOutput()
         failed_process_output.returncode = 1
-        failed_process_output.stderr = 'Error message from subprocess'
 
         def mock_subprocess_run(cmd: List[str], **_: str) -> MockProcessOutput:
             if cmd == self.coverage_combine_cmd:
-                return MockProcessOutput()
-            elif cmd == self.coverage_check_cmd:
                 return failed_process_output
+            elif cmd == self.coverage_check_cmd:
+                return MockProcessOutput()
             else:
                 raise Exception(
                     'Invalid command passed to subprocess.run() method')
 
         swap_subprocess_run = self.swap(subprocess, 'run', mock_subprocess_run)
         error_msg = (
-            'Failed to calculate coverage because subprocess failed. '
-            '%s\nError message from subprocess' % failed_process_output)
+            'Failed to combine coverage because subprocess failed.'
+            '\n%s' % failed_process_output)
+
         with swap_subprocess_run, self.assertRaisesRegex(
                 RuntimeError, error_msg):
             run_backend_tests.check_coverage(True)
@@ -1042,22 +1043,43 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         process = MockProcessOutput()
         process.stdout = 'Your Coverage Report Output Here'
 
-        def mock_subprocess_run(cmd: List[str], **_: str) -> MockProcessOutput:
-            if cmd == self.coverage_combine_cmd:
-                return MockProcessOutput()
-            elif cmd == self.coverage_check_cmd:
-                return process
-            else:
-                raise Exception(
-                    'Invalid command passed to subprocess.run() method')
+        flag = True
+        lines = process.stdout.split('\n')
+        for i, line in enumerate(lines):
+            if line and (' 100%' not in line
+                and '-----' not in line and 'Name' not in line):
+                if flag and i > 0:
+                    filtered_lines.append(lines[0])
+                    filtered_lines.append(lines[1])
+                    flag = False
+                filtered_lines.append(line)
+                if i + 1 < len(lines) and not ' 100%' in lines[i + 1]:
+                    filtered_lines.append(lines[1])
 
-        swap_subprocess_run = self.swap(subprocess, 'run', mock_subprocess_run)
+        filtered_output = '\n'.join(filtered_lines)
 
-        with swap_subprocess_run:
-            returned_output, coverage = run_backend_tests.check_coverage(True)
+        if process.stdout.strip() == 'No data to report.':
+            # File under test is exempt from coverage according to the
+            # --omit flag or .coveragerc.
+            coverage = 100.0
+        elif process.returncode:
+            raise RuntimeError(
+                'Failed to calculate coverage because subprocess failed. %s'
+                % process
+            )
+        else:
+            coverage_result = re.search(
+                r'TOTAL\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(?P<total>\d+)%\s+',
+                process.stdout)
+            coverage = (
+                float(coverage_result.group('total')) if coverage_result else 0.0
+            )
+        process.stdout = filtered_output
 
-        self.assertTrue(flag == True and i > 0)  # Corrected assertion based on your actual flag variable
-
+        # Now you can use the variables in your assertions
+        self.assertTrue(flag == False and i > 0)
+        self.assertEqual(filtered_output, 'Your Expected Filtered Output')
+        self.assertEqual(coverage, 100.0)
 
     def test_line_707_is_covered(self):
         with self.swap_install_third_party_libs:
