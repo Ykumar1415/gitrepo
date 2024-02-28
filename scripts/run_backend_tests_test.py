@@ -876,7 +876,6 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         coverage_report_output ="""
          Name                                                                             Stmts   Miss Branch BrPart  Cover   Missing
         ----------------------------------------------------------------------------------------------------------------------------
-        scripts/setup_gae.py                                                                35     12      8      1    70%   55-75
         scripts/check_coverage.py                                                       10      0       0      0   100%
         TOTAL                                                                            53555  18198  16507   1568    60%
         ----------------------------------------------------------------------------------------------------------------------------
