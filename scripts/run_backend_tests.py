@@ -709,8 +709,8 @@ def check_coverage(
             filtered_lines.append(line)
             if i + 1 < len(lines) and not ' 100%' in lines[i + 1]:
                 filtered_lines.append(lines[1])
-        elif 'TOTAL' in line:
-            filtered_lines.append(line)
+        # elif 'TOTAL' in line:
+        #     filtered_lines.append(line)
 
     filtered_output = '\n'.join(filtered_lines)
 
