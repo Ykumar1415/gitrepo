@@ -892,6 +892,11 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
                 True, include=include_files)
 
         self.assertEqual(returned_output, coverage_report_output)
+        self.assertNotIn("Name", returned_output)
+        self.assertNotIn("Stmts", returned_output)
+        self.assertNotIn("Miss", returned_output)
+        self.assertNotIn("Cover", returned_output)
+        self.assertIn("TOTAL", returned_output)
         self.assertEqual(coverage, 86)
 
     def test_coverage_is_calculated_correctly_for_a_single_file(self) -> None:
@@ -917,12 +922,6 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
                 False, data_file=data_file)
 
         self.assertEqual(returned_output, coverage_report_output)
-        # returned_output should not include "100%" in any line
-        self.assertNotIn('100%', returned_output)
-        # returned_output should include '---' in the last line
-        self.assertIn('---', returned_output)
-        #returned_output should include "Name" in first line
-        self.assertIn('Name', returned_output)
         self.assertEqual(coverage, 86)
 
     def test_no_data_to_report_returns_full_coverage(self) -> None:
