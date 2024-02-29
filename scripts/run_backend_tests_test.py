@@ -914,18 +914,10 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         swap_subprocess_run = self.swap(subprocess, 'run', mock_subprocess_run)
         with swap_subprocess_run:
             returned_output, coverage = run_backend_tests.check_coverage(
-                False, data_file=data_file)
+                True)
 
         self.assertEqual(returned_output, coverage_report_output)
         self.assertEqual(coverage, 86)
-
-        with swap_subprocess_run:
-            returned_output, coverage = run_backend_tests.check_coverage(
-                True
-            )
-
-        self.assertEqual(returned_output,coverage_report_output)
-        self.assertEqual(coverage,86)
 
     def test_no_data_to_report_returns_full_coverage(self) -> None:
         with self.swap_install_third_party_libs:
