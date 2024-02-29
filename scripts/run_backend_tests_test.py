@@ -912,10 +912,14 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
                     'Invalid command passed to subprocess.run() method')
 
         swap_subprocess_run = self.swap(subprocess, 'run', mock_subprocess_run)
+        print("*******************************************************")
+        print("datafile", data_file)
+        print("********************************************************")
         with swap_subprocess_run:
             returned_output, coverage = run_backend_tests.check_coverage(
                 False, data_file=data_file)
-
+        print("returned Output", returned_output)
+        print("output to compare", coverage_report_output)
         self.assertEqual(returned_output, coverage_report_output)
         self.assertEqual(coverage, 86)
 
