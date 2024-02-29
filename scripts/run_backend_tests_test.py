@@ -898,13 +898,7 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         with self.swap_install_third_party_libs:
             from scripts import run_backend_tests
         data_file = '.coverage.hostname.12345.987654321'
-        coverage_report_output = """
-        Name                                                                             Stmts   Miss Branch BrPart  Cover   Missing
-        ----------------------------------------------------------------------------------------------------------------------------
-        scripts/setup_gae.py                                                                35     12      8      1    70%   55-75
-        TOTAL                                                                            53555  18198  16507   1568    60%
-        ----------------------------------------------------------------------------------------------------------------------------
-        """
+        coverage_report_output = 'TOTAL       283     36    112     10    86% '
         process = MockProcessOutput()
         process.stdout = coverage_report_output
 
