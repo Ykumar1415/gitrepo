@@ -648,7 +648,6 @@ def main(args: Optional[List[str]] = None) -> None:
     print('')
     print('Done!')
 
-
 def check_coverage(
     combine: bool,
     data_file: Optional[str] = None,
