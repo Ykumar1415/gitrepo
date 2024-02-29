@@ -873,7 +873,7 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         include_files = (
             'scripts/run_backend_tests.py', 'core/domain/exp_domain.py')
         self.coverage_check_cmd.append('--include=%s' % ','.join(include_files))
-        coverage_report_output = 'TOTAL       283     36    112     10    86% '
+        coverage_report_output = ''
         process = MockProcessOutput()
         process.stdout = coverage_report_output
 
