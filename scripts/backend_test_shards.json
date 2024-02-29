@@ -316,6 +316,7 @@
         "core.domain.contribution_stats_services_test"
     ],
     "5": [
+        "scripts.run_backend_tests_test",
         "core.controllers.classifier_test",
         "core.controllers.suggestion_test",
         "core.controllers.voice_artist_test",
@@ -338,7 +339,6 @@
         "extensions.issues.CyclicStateTransitions.CyclicStateTransitions_test",
         "extensions.issues.EarlyQuit.EarlyQuit_test",
         "extensions.visualizations.models_test",
-        "scripts.run_backend_tests_test",
         "scripts.run_lighthouse_tests_test",
         "scripts.start_test",
         "setup_test",

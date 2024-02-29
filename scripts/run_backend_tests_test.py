@@ -898,7 +898,12 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         with self.swap_install_third_party_libs:
             from scripts import run_backend_tests
         data_file = '.coverage.hostname.12345.987654321'
-        coverage_report_output = 'TOTAL       283     36    112     10    86% '
+          coverage_report_output = (
+        'scripts/setup_gae.py                                                                35     23      8      0    28%   39-83\n'
+        '----------------------------------------------------------------------------------------------------------------------------\n'
+        'TOTAL                                                                            53072  15569  16655   2134    64%\n'
+        '----------------------------------------------------------------------------------------------------------------------------\n'
+        )
         process = MockProcessOutput()
         process.stdout = coverage_report_output
 
@@ -918,6 +923,18 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
 
         self.assertEqual(returned_output, coverage_report_output)
         self.assertEqual(coverage, 86)
+
+        self.assertIn('scripts/setup_gae.py', returned_output)
+        self.assertIn('35     23      8      0    28%   39-83', returned_output)
+        self.assertIn('TOTAL                                                                            53072  15569  16655   2134    64%', returned_output)
+
+
+        #  check that returned_output does contain "Name" only once
+        self.assertEqual(returned_output.count('Name'), 1)
+        # check that returned_output does contain "Total" only once
+        self.assertEqual(returned_output.count('TOTAL'), 1)
+        # check that returned_output does contain lines including '---' can be multiple 
+        self.assertGreater(returned_output.count('---'), 0)
 
     def test_no_data_to_report_returns_full_coverage(self) -> None:
         with self.swap_install_third_party_libs:
