@@ -621,25 +621,25 @@ def main(args: Optional[List[str]] = None) -> None:
             )
         print('')
         print(report_stdout)
-        if len(report_stdout) > 0: # pragma: no cover
+        if len(report_stdout) > 0:
             print(
                 'WARNING: Backend test coverage is below 100%.'
                 ' The rightmost "Missing" column above '
                 'shows which lines are uncovered.'
-                )  # pragma: no cover
+                )
 
             print(
                 'Please add tests for scenarios that exercise '
                 'those lines of code so that there are no uncovered '
                 'lines in each file.'
-                )  # pragma: no cover
+                )
 
             print(
                 'For more information, please see the '
                 '[backend tests wiki page]'
                 '(https://github.com/oppia/oppia/wiki/'
                 'Backend-tests#coverage-reports ).'
-                )  # pragma: no cover
+                )
 
         if (coverage != 100
                 and not parsed_args.ignore_coverage):
