@@ -695,21 +695,21 @@ def check_coverage(
         cmd, capture_output=True, encoding='utf-8', env=env,
         check=False)
 
-    filtered_lines = []
-    flag = True
-    lines = process.stdout.split('\n')
-    for i, line in enumerate(lines):
-        if line and (' 100%' not in line
-         and '-----' not in line and 'Name' not in line):
-            if flag and i > 0:
-                filtered_lines.append(lines[0])
-                filtered_lines.append(lines[1])
-                flag = False
-            filtered_lines.append(line)
-            if i + 1 < len(lines) and not ' 100%' in lines[i + 1]:
-                filtered_lines.append(lines[1])
+    not_covered_lines = []
+    is_first_line = True
+    output_lines = process.stdout.split('\n')
 
-    filtered_output = '\n'.join(filtered_lines)
+    for index, line in enumerate(output_lines):
+        if line and (' 100%' not in line and '-----' not in line and 'Name' not in line):
+            if is_first_line and index > 0:
+                not_covered_lines.append(output_lines[0])
+                not_covered_lines.append(output_lines[1])
+                is_first_line = False
+            not_covered_lines.append(line)
+            if index + 1 < len(output_lines) and ' 100%' not in output_lines[index + 1]:
+                not_covered_lines.append(output_lines[1])
+
+    not_covered_lines_output = '\n'.join(not_covered_lines)
 
     if process.stdout.strip() == 'No data to report.':
         # File under test is exempt from coverage according to the
@@ -727,8 +727,8 @@ def check_coverage(
         coverage = (
             float(coverage_result.group('total')) if coverage_result else 0.0
         )
-    process.stdout = filtered_output
-    return filtered_output, coverage
+    process.stdout = not_covered_lines_output
+    return process.stdout, coverage
 
 
 if __name__ == '__main__': # pragma: no cover
