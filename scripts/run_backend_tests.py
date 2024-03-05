@@ -700,7 +700,8 @@ def check_coverage(
     output_lines = process.stdout.split('\n')
 
     for index, line in enumerate(output_lines):
-        if line and (' 100%' not in line and '-----' not in line and 'Name' not in line):
+        if line and (' 100%' not in line and '-----' not in line
+         and 'Name' not in line):
             if is_first_line and index > 0:
                 not_covered_lines.append(output_lines[0])
                 not_covered_lines.append(output_lines[1])

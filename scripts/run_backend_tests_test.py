@@ -25,7 +25,6 @@ import socket
 import subprocess
 import sys
 import threading
-import logging
 
 from core import feconf
 from core import utils
@@ -37,7 +36,6 @@ from scripts import servers
 
 from typing import Callable, Final, List, Tuple
 
-logging.basicConfig(level=logging.DEBUG)
 TEST_RUNNER_PATH: Final = os.path.join(
     os.getcwd(), 'core', 'tests', 'gae_suite.py'
 )
@@ -900,7 +898,6 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         with self.swap_install_third_party_libs:
             from scripts import run_backend_tests
         data_file = '.coverage.hostname.12345.987654321'
-
         coverage_report_output = (
             'Name                                                       '
             '                    Stmts   Miss Branch BrPart  Cover   Missing\n'
@@ -933,9 +930,6 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         with swap_subprocess_run:
             returned_output, coverage = run_backend_tests.check_coverage(
                 False, data_file=data_file)
-            logging.info('Coverage:\n %s', coverage)
-            logging.info('Output:\n %s', returned_output)
-            logging.info('Expected:\n %s', coverage_report_output)
 
         normalized_expected_output = coverage_report_output.strip()
         normalized_returned_output = returned_output.strip()
