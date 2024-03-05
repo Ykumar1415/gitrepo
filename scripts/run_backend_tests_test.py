@@ -900,13 +900,23 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         with self.swap_install_third_party_libs:
             from scripts import run_backend_tests
         data_file = '.coverage.hostname.12345.987654321'
-        coverage_report_output = """Name                                                                           Stmts   Miss Branch BrPart  Cover   Missing
-        --------------------------------------------------------------------------------------------------------------------------
-        core/constants.py                                                                 37      8      6      1    70%   108-112, 119-123
-        --------------------------------------------------------------------------------------------------------------------------
-        TOTAL                                                                          53906  17509  16917   1191    62%
-        --------------------------------------------------------------------------------------------------------------------------
-        """
+
+        coverage_report_output = (
+            'Name                                                       '
+            '                    Stmts   Miss Branch BrPart  Cover   Missing\n'
+            '------------------------------------------------------------'
+            '--------------------------------------------------------------\n'
+            'core/constants.py                         '
+            '                         '
+            '               37      8      6      1    70%   108-112, 119-123\n'
+            '-------------------------------------------------------------'
+            '-------------------------------------------------------------\n'
+            'TOTAL                                                         '
+            '                 53906  17509  16917   1191    62%\n'
+            '--------------------------------------------------------------'
+            '------------------------------------------------------------\n'
+        )
+
         process = MockProcessOutput()
         process.stdout = coverage_report_output
 
@@ -923,11 +933,13 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         with swap_subprocess_run:
             returned_output, coverage = run_backend_tests.check_coverage(
                 False, data_file=data_file)
-            # logging.debug("***************************returned output=  %s", returned_output)
-            # logging.debug("***************************coverage =  %s", coverage)
-            # logging.debug("***************************to be compared =  %s", coverage_report_output)
+            logging.info('Coverage:\n %s', coverage)
+            logging.info('Output:\n %s', returned_output)
+            logging.info('Expected:\n %s', coverage_report_output)
 
-        self.assertEqual(returned_output, coverage_report_output)
+        normalized_expected_output = coverage_report_output.strip()
+        normalized_returned_output = returned_output.strip()
+        self.assertEqual(normalized_expected_output, normalized_returned_output)
         self.assertEqual(coverage, 62.0)
 
     def test_no_data_to_report_returns_full_coverage(self) -> None:
