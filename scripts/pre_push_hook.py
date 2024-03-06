@@ -37,6 +37,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 
 from types import TracebackType
 from typing import Dict, Final, List, Optional, Tuple, Type
@@ -520,6 +521,7 @@ def main(args: Optional[List[str]] = None) -> None:
     """Main method for pre-push hook that executes the Python/JS linters on all
     files that deviate from develop.
     """
+    start_time = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument('remote', nargs='?', help='provided by git before push')
     parser.add_argument('url', nargs='?', help='provided by git before push')
@@ -605,6 +607,8 @@ def main(args: Optional[List[str]] = None) -> None:
                 print(
                     'Push aborted due to failing e2e test configuration check.')
                 sys.exit(1)
+        end_time = time.time()
+        print('Linting took %s seconds' % (end_time - start_time))
     return
 
 
