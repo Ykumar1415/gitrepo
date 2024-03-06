@@ -621,12 +621,18 @@ def main(args: Optional[List[str]] = None) -> None:
                 sys.exit(1)
             end_time_frontend_tests = time.time()
 
-    print('Elementary checks took %s minutes' % ((end_time_elementry_checks - start_time) / 60))
-    print('Backend inconsistency checks took %s minutes' % ((end_time_backend_inconsistency_checks - start_time_backend_inconsistency_checks) / 60))
-    print('Linting took %s minutes' % ((end_time_linting - start_time_linting) / 60))
-    print('Mypy checks took %s minutes' % ((end_time_mypy_checks - start_time_mypy_checks) / 60))
-    print('Frontend tests took %s minutes' % ((end_time_frontend_tests - start_time_frontend_tests) / 60))
-    print('Typescript checks took %s minutes' % ((end_time_typescript_checks - start_time_typescript_checks) / 60))
+    print('Elementary checks took %s minutes' % (
+        (end_time_elementary_checks - start_time) / 60))
+    print('Backend inconsistency checks took %s minutes' % (
+        (end_time_backend_inconsistency_checks - start_time_backend_inconsistency_checks) / 60))
+    print('Linting took %s minutes' % (
+        (end_time_linting - start_time_linting) / 60))
+    print('Mypy checks took %s minutes' % (
+        (end_time_mypy_checks - start_time_mypy_checks) / 60))
+    print('Frontend tests took %s minutes' % (
+        (end_time_frontend_tests - start_time_frontend_tests) / 60))
+    print('Typescript checks took %s minutes' % (
+        (end_time_typescript_checks - start_time_typescript_checks) / 60))
 
     print('All checks passed.')
 
