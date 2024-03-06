@@ -521,6 +521,7 @@ def main(args: Optional[List[str]] = None) -> None:
     """Main method for pre-push hook that executes the Python/JS linters on all
     files that deviate from develop.
     """
+    total_start_time = time.time()
     start_time = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument('remote', nargs='?', help='provided by git before push')
@@ -620,7 +621,7 @@ def main(args: Optional[List[str]] = None) -> None:
                     'Push aborted due to failing e2e test configuration check.')
                 sys.exit(1)
             end_time_frontend_tests = time.time()
-
+    total_end_time = time.time()
     print('Elementary checks took %s minutes' % (
         (end_time_elementry_checks - start_time) / 60))
     print('Backend inconsistency checks took %s minutes' % (
@@ -633,6 +634,8 @@ def main(args: Optional[List[str]] = None) -> None:
         (end_time_frontend_tests - start_time_frontend_tests) / 60))
     print('Typescript checks took %s minutes' % (
         (end_time_typescript_checks - start_time_typescript_checks) / 60))
+    print('Total time taken: %s minutes' % (
+        (total_end_time - total_start_time) / 60))
 
     print('All checks passed.')
 
