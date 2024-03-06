@@ -37,6 +37,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 
 from types import TracebackType
 from typing import Dict, Final, List, Optional, Tuple, Type
@@ -520,6 +521,7 @@ def main(args: Optional[List[str]] = None) -> None:
     """Main method for pre-push hook that executes the Python/JS linters on all
     files that deviate from develop.
     """
+    start_time = time.time()
     parser = argparse.ArgumentParser()
     parser.add_argument('remote', nargs='?', help='provided by git before push')
     parser.add_argument('url', nargs='?', help='provided by git before push')
@@ -541,9 +543,19 @@ def main(args: Optional[List[str]] = None) -> None:
             'Your repo is in a dirty state which prevents the linting from'
             ' working.\nStash your changes or commit them.\n')
         sys.exit(1)
-
+    end_time_elementry_checks = time.time()
+    start_time_backend_inconsistency_checks = time.time()
     check_for_backend_python_library_inconsistencies()
+    end_time_backend_inconsistency_checks = time.time()
 
+    start_time_linting = time.time()
+    end_time_linting = time.time()
+    start_time_mypy_checks = time.time()
+    start_time_frontend_tests = time.time()
+    end_time_mypy_checks = time.time()
+    end_time_frontend_tests = time.time()
+    start_time_typescript_checks = time.time()
+    end_time_typescript_checks = time.time()
     for branch, (modified_files, files_to_lint) in collected_files.items():
         with ChangedBranch(branch):
             if not modified_files and not files_to_lint:
@@ -555,14 +567,15 @@ def main(args: Optional[List[str]] = None) -> None:
                     print(
                         'Push failed, please correct the linting issues above.')
                     sys.exit(1)
-
+            end_time_linting = time.time()
+            start_time_mypy_checks = time.time()
             mypy_check_status = execute_mypy_checks()
             if mypy_check_status != 0:
                 print(
                     'Push failed, please correct the mypy type annotation '
                     'issues above.')
                 sys.exit(mypy_check_status)
-
+            end_time_mypy_checks = time.time()
             backend_associated_test_file_check_status = (
                 run_script_and_get_returncode(
                     BACKEND_ASSOCIATED_TEST_FILE_CHECK_CMD))
@@ -571,7 +584,7 @@ def main(args: Optional[List[str]] = None) -> None:
                     'Push failed due to some backend files lacking an '
                     'associated test file.')
                 sys.exit(1)
-
+            start_time_typescript_checks = time.time()
             typescript_checks_status = 0
             if does_diff_include_ts_files(files_to_lint):
                 typescript_checks_status = run_script_and_get_returncode(
@@ -589,7 +602,8 @@ def main(args: Optional[List[str]] = None) -> None:
                     'Push aborted due to failing typescript checks in '
                     'strict mode.')
                 sys.exit(1)
-
+            end_time_typescript_checks = time.time()
+            start_time_frontend_tests = time.time()
             frontend_status = 0
             ci_check_status = 0
             if does_diff_include_js_or_ts_files(files_to_lint):
@@ -605,6 +619,29 @@ def main(args: Optional[List[str]] = None) -> None:
                 print(
                     'Push aborted due to failing e2e test configuration check.')
                 sys.exit(1)
+            end_time_frontend_tests = time.time()
+
+    print(
+        'Elementary checks took %s seconds' % (
+            (end_time_elementry_checks - start_time)//60))
+    print( # type: ignore[no-untyped-call]
+        'Backend inconsistency checks took %s seconds' % (
+           ( end_time_backend_inconsistency_checks -
+            start_time_backend_inconsistency_checks)//60))
+    print(
+        'Linting took %s seconds' % (
+            (end_time_linting - start_time_linting)//60))
+    print(
+        'Mypy checks took %s seconds' % (
+            (end_time_mypy_checks - start_time_mypy_checks)//60))
+    print(
+        'Frontend tests took %s seconds' % (
+            (end_time_frontend_tests - start_time_frontend_tests)//60))
+    print(
+        'Typescript checks took %s seconds' % (
+            (end_time_typescript_checks - start_time_typescript_checks)//60))
+    print('All checks passed.')
+
     return
 
 
