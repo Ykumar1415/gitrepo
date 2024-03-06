@@ -544,9 +544,9 @@ def main(args: Optional[List[str]] = None) -> None:
             ' working.\nStash your changes or commit them.\n')
         sys.exit(1)
     end_time_elementry_checks = time.time()
-    start_time_backend_inconsistency_checks = time.time()
+    backend_time_en = time.time()
     check_for_backend_python_library_inconsistencies()
-    end_time_backend_inconsistency_checks = time.time()
+    backend_time_in = time.time()
 
     start_time_linting = time.time()
     end_time_linting = time.time()
@@ -622,9 +622,9 @@ def main(args: Optional[List[str]] = None) -> None:
             end_time_frontend_tests = time.time()
 
     print('Elementary checks took %s minutes' % (
-        (end_time_elementary_checks - start_time) / 60))
+        (end_time_elementry_checks - start_time) / 60))
     print('Backend inconsistency checks took %s minutes' % (
-        (end_time_backend_inconsistency_checks - start_time_backend_inconsistency_checks) / 60))
+        (backend_time_in - backend_time_en) / 60))
     print('Linting took %s minutes' % (
         (end_time_linting - start_time_linting) / 60))
     print('Mypy checks took %s minutes' % (
