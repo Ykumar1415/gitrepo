@@ -2090,6 +2090,48 @@ class RunBackendTestsTests(test_utils.GenericTestBase):
         self.assertEqual(expected_output, returned_res)
         self.assertEqual(coverage, 62.0)
 
+    def test_coverage_is_calculated_correctly_for_a_single_file_all(self) -> None:
+        with self.swap_install_third_party_libs:
+            from scripts import run_backend_tests
+        data_file = '.coverage.hostname.12345.987654321'
+        coverage_report_output = (
+            'Name                                                       '
+            '                    Stmts   Miss Branch BrPart  Cover   Missing\n'
+            '------------------------------------------------------------'
+            '--------------------------------------------------------------\n'
+            'core/constants.py                         '
+            '                         '
+            '               37      0      0      0    100%                   \n'
+            '-------------------------------------------------------------'
+            '-------------------------------------------------------------\n'
+            'TOTAL                                                         '
+            '                 37     0     0      0       100%\n'
+            '--------------------------------------------------------------'
+            '------------------------------------------------------------\n'
+        )
+        process = MockProcessOutput()
+        process.stdout = coverage_report_output
+
+        def mock_subprocess_run(cmd: List[str], **_: str) -> MockProcessOutput:
+            if cmd == self.coverage_combine_cmd:
+                return MockProcessOutput()
+            elif cmd == self.coverage_check_cmd:
+                return process
+            else:
+                raise Exception(
+                    'Invalid command passed to subprocess.run() method')
+
+        swap_subprocess_run = self.swap(subprocess, 'run', mock_subprocess_run)
+        with swap_subprocess_run:
+            returned_output, coverage = run_backend_tests.check_coverage(
+                False, data_file=data_file)
+
+        expected_output = ''
+        returned_res = returned_output.strip()
+        self.assertEqual(expected_output, returned_res)
+        self.assertEqual(coverage, 100.0)
+
+
     def test_no_data_to_report_returns_full_coverage(self) -> None:
         with self.swap_install_third_party_libs:
             from scripts import run_backend_tests
