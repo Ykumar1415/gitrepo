@@ -1,6 +1,4 @@
-# coding: utf-8
-#
-# Copyright 2022 The Oppia Authors. All Rights Reserved.
+# Copyright 2014 The Oppia Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -607,41 +605,37 @@ def main(args: Optional[List[str]] = None) -> None:
         report_stdout, coverage = check_coverage(True)
         print('')
         print(
-            '+-------------------------------------------------------------'
-            '--------------------------------------------------------------'
-            '-------+'
+            '+----------------------------------------------------------------+'
             )
         print(
-            '|----------------------------------------- '
+            '|-------- '
             'SUMMARY OF THE FILES WITH INCOMPLETE COVERAGE '
-            '------------------------------------------|'
+            '---------|'
             )
         print(
-            '+---------------------------------------------------------------'
-            '-------------------------------------------------------------'
-            '------+'
+            '+----------------------------------------------------------------+'
             )
         print('')
         print(report_stdout)
         if coverage != 100:
             print(
-                'WARNING: Backend test coverage is below 100%.'
-                ' The rightmost "Missing" column above '
-                'shows which lines are uncovered.'
-                )
+            'WARNING: Backend test coverage is below 100%.\n'
+            'The rightmost "Missing" column above'
+            ' shows which lines uncovered.'
+            )
 
             print(
-                'Please add tests for scenarios that exercise '
-                'those lines of code so that there are no uncovered '
-                'lines in each file.'
-                )
+            'Please add tests for scenarios that'
+            ' exercise those lines of code\n'
+            ' so that there are no uncovered lines in each file.'
+            )
 
             print(
-                'For more information, please see the '
-                '[backend tests wiki page]'
-                '(https://github.com/oppia/oppia/wiki/'
-                'Backend-tests#coverage-reports ).'
-                )
+            'For more information, please see\n'
+            '[backend tests wiki page]\n'
+            '(https://github.com/oppia/oppia/wiki/'
+            'Backend-tests#coverage-reports ).'
+            )
 
         if (coverage != 100
                 and not parsed_args.ignore_coverage):
@@ -698,8 +692,6 @@ def check_coverage(
         cmd, capture_output=True, encoding='utf-8', env=env,
         check=False)
 
-    incomplete_coverage_lines: List[str] = []
-
     coverage_output_lines = process.stdout.split('\n')
     # The `process.stdout` is a string containing the coverage report,
     # structured as follows:
@@ -710,7 +702,7 @@ def check_coverage(
     # file2.py      20    0      4      0    90%   32, 34, 36, 38.
     # -------------------------------------------------
     # TOTAL        30    0      6      0   95%.
-
+    incomplete_coverage_lines: List[str] = []
     # Lines with incomplete coverage are appenede to incomplete_coverage_lines.
     for line_number, line in enumerate(coverage_output_lines):
 
@@ -730,6 +722,7 @@ def check_coverage(
 
             incomplete_coverage_lines.append(line)
 
+            # The Subsequent lines will be separated by a dashed line(-----).
             if line_number + 1 < len(coverage_output_lines) and (
                 ' 100%' not in coverage_output_lines[line_number + 1]):
                 incomplete_coverage_lines.append(coverage_output_lines[1])
