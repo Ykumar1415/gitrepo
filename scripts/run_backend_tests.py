@@ -649,6 +649,7 @@ def check_coverage(
         sys.executable, '-m', 'coverage', 'report',
          '--omit="%s*","third_party/*","/usr/share/*"'
          % common.OPPIA_TOOLS_DIR, '--show-missing']
+    cmd.append('--skip-covered')
     if include:
         cmd.append('--include=%s' % ','.join(include))
 
