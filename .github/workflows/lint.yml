@@ -1,15 +1,5 @@
 name: Lint Checks
-on:
-  merge_group:
-    types: [checks_requested]
-  push:
-    branches:
-      - develop
-      - release-*
-  pull_request:
-    branches:
-      - develop
-      - release-*
+on: [push]
 
 jobs:
   lint:
@@ -57,3 +47,18 @@ jobs:
         with:
           message: "Lint checks failed on the upstream develop branch."
           webhook-url: ${{ secrets.BUILD_FAILURE_ROOM_WEBHOOK_URL }}
+      - name: Get Job Summary
+        id: job-summary
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const cpuUsage = process.cpuUsage();
+            const memoryUsage = process.memoryUsage();
+            console.log(`Resource Usage Summary:
+            CPU Usage:
+              User: ${cpuUsage.user} microseconds
+              System: ${cpuUsage.system} microseconds
+            Memory Usage:
+              RSS: ${memoryUsage.rss} bytes
+              Heap Total: ${memoryUsage.heapTotal} bytes
+              Heap Used: ${memoryUsage.heapUsed} bytes`);
